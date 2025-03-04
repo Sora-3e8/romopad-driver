@@ -51,8 +51,7 @@ Configuration
 
 ```
 #This layer will imitate numpad now 
-[LAYER0]
-KEY_01=NUM_LOCK
+KEY_01=KEY_NUMLOCK
 KEY_05=KEY_KPDOT
 KEY_09=KEY_KP0
 KEY_10=KEY_KP1
@@ -65,8 +64,7 @@ KEY_02=KEY_KP7
 KEY_03=KEY_KP8
 KEY_04=KEY_KP9
 NOB1_RT=layer_up
-NOB1_LT=KEY_VOLUMEDOWN
-NOB2_RT=KEY_VOLUMEUP
+NOB1_LT=layer_down
 ```
 
 
