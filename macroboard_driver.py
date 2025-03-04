@@ -1,13 +1,15 @@
 import evdev
+import evdev.ecodes as e
 import os
 import time
 import config_loader
 
+keep_alive = 1
 supported_devs = [{"vendor":4489,"product":34880,"version":513}]
 devnames = [{"name":"Acer Communications & Multimedia USB Composite Device","vendor":4489,"product":34880,"version":513}]
-
 selected_device = None
 clayer = 0
+
 
 def layer_up():
     global clayer
@@ -19,9 +21,24 @@ def layer_down():
     clayer = clayer - 1
     print(clayer)
 
-mouse_controls = ["BTN_LEFT","BTN_RIGHT","BTN_MIDDLE","BTN_SIDE","BTN_EXTRA"]
+commands = {"layer_up":layer_up,"layer_down":layer_down}
+
+def load_capabilities(layout_map):
+    key_ev_list = [e.BTN_MOUSE]
+    mouse_evs = [e.ABS_X]
+    print("Loading keyevents...")
+    for layer in layout_map.keys():
+        for actions in list(layout_map[layer].values()):
+            for key_ev in actions.split("+"):
+                if hasattr(e,key_ev):
+                    key_ev_list.append( getattr(e,key_ev) )
+    print("Key caps:",key_ev_list)
+    cap = {e.EV_KEY:key_ev_list}
+    print("Capabilities assembled")
+    return cap
+
 def start_driver():
-    import evdev.ecodes as e
+    
     # Loads keymapping and all layers from configuration file
     keymap=config_loader.load()
 
@@ -46,20 +63,26 @@ def start_driver():
     # Virtual device "Macroboard" is created and the translating starts 
     if selected_device != None:
         selected_device.grab() 
-        cap = {e.EV_KEY: [getattr(e,val) for val in layer_map.values() if val not in control_functions ]}
-        cap[e.EV_KEY].append(e.BTN_MOUSE)
+        cap = load_capabilities(keymap)
         virtual_device = evdev.UInput(cap, name="Macroboard",version=1)
-
+        print("Virtual device created")
+        print(list(keymap["LAYER"+str(clayer)].keys()) )
         for event in selected_device.read_loop():
             if event.type == evdev.ecodes.EV_KEY:
                 ev = evdev.categorize(event)
-                if ev.keycode in layer_map: 
-                    if layer_map[ev.keycode] in control_functions:
-                        if ev.event.value == 1:
-                            control_functions[layer_map[ev.keycode]]() 
-                    else: 
-                        virtual_device.write(e.EV_KEY,getattr(e,layer_map[ev.keycode]),ev.event.value)
-                        virtual_device.syn()
+                # Checks if any action is defined in keymap 
+                print("KEY: ",ev.keycode)
+                if ev.keycode in keymap["LAYER"+str(clayer)].keys():
+                    print("Existing passed")
+                    for action in keymap["LAYER"+str(clayer)][ev.keycode].split("+"):
+                        if action in commands:
+                            if ev.event.value == 1:
+                                commands[action]() 
+                        else: 
+                            virtual_device.write(e.EV_KEY,getattr(e,action),ev.event.value)
+                            print("Emitting: ",getattr(e,action))
+                    virtual_device.syn()
+                    print("Dev sync")
 
             # Breaks the loop if driver gets stopped
             if keep_alive == 0:
