@@ -1,3 +1,4 @@
+import asyncio
 import evdev
 import evdev.ecodes as e
 import os
@@ -59,34 +60,37 @@ def start_driver():
         # Delays repetition by 3 secs to avoid overload
         time.sleep(3)
 
+    selected_device.grab() 
+    cap = load_capabilities(keymap)
+    virtual_device = evdev.UInput(cap, name="Macroboard",version=1)
+    print("Virtual device created")
+    read_loop(keymap,selected_device, virtual_device)
+
+def read_loop(keymap,selected_device, virtual_device):
     # If the device is valid the driver will enter translating phase
     # Virtual device "Macroboard" is created and the translating starts 
-    if selected_device != None:
-        selected_device.grab() 
-        cap = load_capabilities(keymap)
-        virtual_device = evdev.UInput(cap, name="Macroboard",version=1)
-        print("Virtual device created")
-        print(list(keymap["LAYER"+str(clayer)].keys()) )
-        for event in selected_device.read_loop():
-            if event.type == evdev.ecodes.EV_KEY:
-                ev = evdev.categorize(event)
-                # Checks if any action is defined in keymap 
-                print("KEY: ",ev.keycode)
-                if ev.keycode in keymap["LAYER"+str(clayer)].keys():
-                    print("Existing passed")
-                    for action in keymap["LAYER"+str(clayer)][ev.keycode].split("+"):
-                        if action in commands:
-                            if ev.event.value == 1:
-                                commands[action]() 
-                        else: 
-                            virtual_device.write(e.EV_KEY,getattr(e,action),ev.event.value)
-                            print("Emitting: ",getattr(e,action))
-                    virtual_device.syn()
-                    print("Dev sync")
-
+    while keep_alive==1:
+        event = selected_device.read_one()
+        if event != None and event.type == evdev.ecodes.EV_KEY :
+            ev = evdev.categorize(event)
+            # Checks if any action is defined in keymap 
+            print("KEY: ",ev.keycode)
+            if ev.keycode in keymap["LAYER"+str(clayer)].keys():
+                print("Existing passed")
+                for action in keymap["LAYER"+str(clayer)][ev.keycode].split("+"):
+                    if action in commands:
+                        if ev.event.value == 1:
+                            commands[action]() 
+                    else: 
+                        virtual_device.write(e.EV_KEY,getattr(e,action),ev.event.value)
+                        print("Emitting: ",getattr(e,action))
+                virtual_device.syn()
+                print("Dev sync")
             # Breaks the loop if driver gets stopped
-            if keep_alive == 0:
-                break
+            #if keep_alive == 0:
+                #break
+
+
                         
     
 if __name__ == "__main__":
