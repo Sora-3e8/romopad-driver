@@ -1,54 +1,58 @@
 import os
-import configparser
+import xml.etree.ElementTree as ET
 CONFIG_PATH = "/etc/macroboard/"
-CONF_FNAME = "layout.conf"
+CONF_FNAME = "layout.xml"
 
-default_config=""" 
-[LAYER0]
-KEY_01=KEY_NUMLOCK
-KEY_05=KEY_KPDOT
-KEY_09=KEY_KP0
-KEY_10=KEY_KP1
-KEY_11=KEY_KP2
-KEY_12=KEY_KP3
-KEY_06=KEY_KP4
-KEY_07=KEY_KP5
-KEY_08=KEY_KP6
-KEY_02=KEY_KP7
-KEY_03=KEY_KP8
-KEY_04=KEY_KP9
-NOB1_RT=layer_up
-NOB1_LT=layer_down
+# There're 2 types of <root> global, layer
+# <global></global> Holds layer agnostic binds
+# <layer id="$id"></layer> Holds layer dependent binds, every layer must have defined unique id! otherwise it wont ever load
+# <bind keys="$key+$key2" type="$type">child</bind> Defines binding for given root either global or layer 
+# attribute $keys defines activation keys syntax is following $keys = "key" or for combination $keys="key1+key2"
+# attribute $type there're three possible values control,command and key
+    # for $type="control" the child should be recognized in built control for the driver => primarily layer controls
+    # for $type="command" the child should be linux bash command in quotes so example <bind keys="KEY_01" type="command">"echo 'Hello world!'"</bind>
+    # for $type="key" the child should be keycode name recognized by evdev
+    # for $type="control" the child should be recognized in built control for the driver => primarily layer controls
+    # for $type="command" the child should be linux bash command in quotes so example <bind keys="KEY_01" type="command">"echo 'Hello world!'"</bind>
+    # for $type="key" the child should be keycode name recognized by evdev, in this however the action needs to be provided value which will be passed on key event
+        # $value can have 4 possible states integer/float, hold, down, release If multiple keys is defined use ; as delimeter if used the value set must be as long as key set 
+            # down = 1 for most keys this means that they're going to be pressed
+default_config=(
 """
-
-# This cannot be changed by user => Translates easy to understand keynames to signal codes emitted by device, used to translate user 
-# hardware layout names to emitted signals names see: macroboard_map.png
-hwtrans_layer = { 
-             "KEY_01": "KEY_A",
-             "KEY_02": "KEY_B",
-             "KEY_03": "KEY_C",
-             "KEY_04": "KEY_D",
-             "KEY_05": "KEY_E",
-             "KEY_06": "KEY_F",
-             "KEY_07": "KEY_G",
-             "KEY_08": "KEY_H",
-             "KEY_09": "KEY_I",
-             "KEY_10": "KEY_J",
-             "KEY_11": "KEY_K",
-             "KEY_12": "KEY_L",
-             "NOB1_LT": "KEY_1",
-             "NOB1": "KEY_2",
-             "NOB1_RT": "KEY_3",
-             "NOB2_LT": "KEY_4",
-             "NOB2": "KEY_5",
-             "NOB2_RT": "KEY_6",
-             }
+<?xml version="1.0" encoding="UTF-8"?>
+<layout>
+  <static-layer>
+      <bind keys="NOB1" type="key">KEY_MUTE</bind>
+      <bind keys="NOB1_LT" type="key">KEY_VOLUMEDOWN</bind>
+      <bind keys="NOB1_LT" type="key">KEY_VOLUMEUP</bind> 
+      <bind keys="NOB2_LT" type="layer_control">prev</bind>
+      <bind keys="NOB2_RT" type="layer_control">next</bind>
+  </static-layer>
+  <!--This layer behaves like numpad-->
+  <layer id="0">
+      <bind keys="KEY_01" type="key">KEY_NUMLOCK</bind>
+      <bind keys="KEY_05" type="key">KEY_KPDOT</bind>
+      <bind keys="KEY_09" type="key">KEY_KP0</bind>
+      <bind keys="KEY_10" type="key">KEY_KP1</bind>
+      <bind keys="KEY_11" type="key">KEY_KP2</bind>
+      <bind keys="KEY_12" type="key">KEY_KP3</bind>
+      <bind keys="KEY_06" type="key">KEY_KP4</bind>
+      <bind keys="KEY_07" type="key">KEY_KP5</bind>
+      <bind keys="KEY_08" type="key">KEY_KP6</bind>
+      <bind keys="KEY_02" type="key">KEY_KP7</bind>
+      <bind keys="KEY_03" type="key">KEY_KP8</bind>
+      <bind keys="KEY_04" type="key">KEY_KP9</bind>
+  </layer>
+</layout>
+""")
 
 # Can be set by user, but this is default
 # NOB_1 left, right by default controls layer
 
 # Writes default config if it does not exist for some reason
 def generate_default():
+    global default_config
+    default_config = "\n".join(default_config.split("\n")[1:])
     try:
         if not os.path.exists(CONFIG_PATH):
             os.makedirs(CONFIG_PATH)
@@ -61,26 +65,64 @@ def generate_default():
         print("Could not write ...")
         print("Loading hardcoded preconf")            
 
+# Checks if some layers exist and if they contain binds
+def check_layers(layer_arr,is_static=False):
+    if len(layer_arr)<1:
+        print("No "+str(is_static).replace("False"," layers defined").replace("True"," no static layers defined"))
+        return False
+    else:
+        if is_static == True:
+            if len(layer_arr[-1].findall("./bind"))>0:
+                return True
+            else:
+                return False
 
+        if is_static == False:
+            for layer in layer_arr:
+                if len(layer.findall("./bind"))>0:
+                    return True
+            return False
+
+def construct_dict(layout):
+    layout_object = {}
+    static_layer = None
+    layers = None
+    layout_object["global"]={}
+    layout_object["layers"]={}
+    print("Found array: ",layout.findall("."))
+    if len(layout.findall("."))<1:
+        print("Invalid configuration: No layout defined")
+
+    static_layers = layout.findall("./static-layer")
+    if check_layers(static_layers,True):
+        static_layer = static_layers[-1]
+
+    layers=layout.findall(".//layer")
+    if not check_layers(layers):
+        # Layers either not existing or all empty
+        layers = None
+
+    # Loads global layout
+    if static_layer != None:
+        for bind in static_layer.findall("bind"):
+            if "type" in bind.attrib:
+                layout_object["global"][ bind.attrib["keys"] ]={"type":bind.attrib["type"],"args":bind.text} 
     
-def translate(config, transl):
-    translated_map={}
-    for layer in list(config.keys()):
-        if layer == "DEFAULT":
-            next
-        translated_map[layer.upper()]={}
-        print("Translation keys:",list(config[layer].keys()))
-        for key in list(config[layer].keys()):
-            translated_map[ layer.upper() ][ transl[key.upper()] ] = config[layer][key]
-    return translated_map
-
+    # Loads layer dependent layout
+    if layers != None:
+        for layer in layers:
+            layout_object["layers"][layer.attrib["id"]]={}
+            for bind in layer.findall("bind"):
+                if "type" in bind.attrib:
+                    layout_object["layers"][layer.attrib["id"]][ bind.attrib["keys"] ]={"type":bind.attrib["type"],"args":bind.text}
+    return layout_object
+        
     
-
 def load():
-    config_obj=configparser.ConfigParser()
+    loaded_xml=None
     if os.path.isfile(CONFIG_PATH+CONF_FNAME):
         try:
-            config_obj.read(CONFIG_PATH+CONF_FNAME)
+            loaded_xml = ET.parse(CONFIG_PATH+CONF_FNAME)
         except Exception as e:
             print("Loading config encountered error:")
             print(str(e))
@@ -88,10 +130,8 @@ def load():
     else:
         print("Could not load configuration, generating default...")
         generate_default()
-        config_obj.read_string(default_config)
-        print("Dict: ",list(dict(config_obj)["LAYER0"].keys()))
-    print(list(config_obj["LAYER0"].keys()))
-    translated_map = translate(dict(config_obj),hwtrans_layer)
-    return translated_map 
+        print("\n".join(default_config.split("\n")[1:]))
+        loaded_xml=ET.fromstring(default_config)
+    return construct_dict(loaded_xml) 
 
 

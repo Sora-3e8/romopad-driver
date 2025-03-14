@@ -14,7 +14,8 @@ This driver utilizes python evdev module to intercept the device and translate t
 Scope
 ---------------
 Target device: Romoral factory 12 key macropad<br>
-This driver is primarily designed for Linux with platform wayland.
+This driver is primarily designed for Linux with platform wayland in mind.
+Xorg is untested! This driver may work on Xorg, but was never tested on the Xorg as it's obsolete and will be phased gradually phased out.
 
 Possible caveats
 ---------------
@@ -47,24 +48,34 @@ The key map of the physical device to configuration names described in the image
 
 Configuration
 ---------------
-<h3>/etc/macroboard/layout.conf:</h3>
+<h3>/etc/macroboard/layout.xml</h3>
 
 ```
-#This layer will imitate numpad now 
-KEY_01=KEY_NUMLOCK
-KEY_05=KEY_KPDOT
-KEY_09=KEY_KP0
-KEY_10=KEY_KP1
-KEY_11=KEY_KP2
-KEY_12=KEY_KP3
-KEY_06=KEY_KP4
-KEY_07=KEY_KP5
-KEY_08=KEY_KP6
-KEY_02=KEY_KP7
-KEY_03=KEY_KP8
-KEY_04=KEY_KP9
-NOB1_RT=layer_up
-NOB1_LT=layer_down
+<?xml version="1.0" encoding="UTF-8"?>
+<layout>
+  <static-layer>
+      <bind keys="NOB1" type="key">KEY_MUTE</bind>
+      <bind keys="NOB1_LT" type="key">KEY_VOLUMEDOWN</bind>
+      <bind keys="NOB1_RT" type="key">KEY_VOLUMEUP</bind> 
+      <bind keys="NOB2_LT" type="layer_control">prev</bind>
+      <bind keys="NOB2_RT" type="layer_control">next</bind>
+  </static-layer>
+  <!--This layer behaves like numpad-->
+  <layer id="0">
+      <bind keys="KEY_01" type="key">KEY_NUMLOCK</bind>
+      <bind keys="KEY_05" type="key">KEY_KPDOT</bind>
+      <bind keys="KEY_09" type="key">KEY_KP0</bind>
+      <bind keys="KEY_10" type="key">KEY_KP1</bind>
+      <bind keys="KEY_11" type="key">KEY_KP2</bind>
+      <bind keys="KEY_12" type="key">KEY_KP3</bind>
+      <bind keys="KEY_06" type="key">KEY_KP4</bind>
+      <bind keys="KEY_07" type="key">KEY_KP5</bind>
+      <bind keys="KEY_08" type="key">KEY_KP6</bind>
+      <bind keys="KEY_02" type="key">KEY_KP7</bind>
+      <bind keys="KEY_03" type="key">KEY_KP8</bind>
+      <bind keys="KEY_04" type="key">KEY_KP9</bind>
+  </layer>
+</layout>
 ```
 
 
