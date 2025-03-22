@@ -5,6 +5,7 @@ Description=Translates macropad input to usable signals
 WorkingDirectory=/opt/romopad
 ExecStart=/opt/romopad/romopad.py --svc start
 ExecStop=/opt/romopad/romopad.py --svc stop
+KillMode=process
 
 
 [Install]
