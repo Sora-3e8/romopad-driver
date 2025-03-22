@@ -107,7 +107,8 @@ def trigg_key_event(virtual_device,keys,value):
 
 def unix_command(virtual_device,arg,key_value):
     if key_value == 0 or key_value == 2:
-        sp.Popen(arg,shell=True,preexec_fn=os.setpgrp)
+        #os.spawnve(os.P_NOWAIT,arg.split(" ")[0],arg.split(" ")[1:],os.environ)
+        sp.Popen(arg,shell=True,stdout=sp.DEVNULL,start_new_session=True)
 
 EVENT_HANDLER = {"layer_control":layer_control,"key":trigg_key_event, "command":unix_command}
 def start_driver():
