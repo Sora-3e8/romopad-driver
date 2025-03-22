@@ -5,7 +5,7 @@ install:
 	sudo cp *.py /opt/romopad/
 	sudo cp romopad.service /etc/systemd/user/
 
-unistall:
+uninstall:
 	rm -rf /opt/romopad
 	rm /etc/systemd/user/romopad.service
 

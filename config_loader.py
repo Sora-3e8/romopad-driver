@@ -1,6 +1,6 @@
 import os
 import xml.etree.ElementTree as ET
-CONFIG_PATH = os.path.expanduser("~/.confing/romopad/")
+CONFIG_PATH = os.path.expanduser("~/.config/romopad/")
 CONF_FNAME = "layout.xml"
 
 # There're 2 types of <root> global, layer
