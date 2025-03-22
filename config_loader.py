@@ -1,6 +1,6 @@
 import os
 import xml.etree.ElementTree as ET
-CONFIG_PATH = "/etc/macroboard/"
+CONFIG_PATH = os.path.expanduser("~/.confing/romopad/")
 CONF_FNAME = "layout.xml"
 
 # There're 2 types of <root> global, layer
@@ -24,7 +24,7 @@ default_config=(
   <static-layer>
       <bind keys="NOB1" type="key">KEY_MUTE</bind>
       <bind keys="NOB1_LT" type="key">KEY_VOLUMEDOWN</bind>
-      <bind keys="NOB1_LT" type="key">KEY_VOLUMEUP</bind> 
+      <bind keys="NOB1_RT" type="key">KEY_VOLUMEUP</bind> 
       <bind keys="NOB2_LT" type="layer_control">prev</bind>
       <bind keys="NOB2_RT" type="layer_control">next</bind>
   </static-layer>

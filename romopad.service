@@ -1,0 +1,11 @@
+[Unit]
+Description=Translates macropad input to usable signals
+
+[Service]
+WorkingDirectory=/opt/romopad
+ExecStart=/opt/romopad/romopad.py --svc start
+ExecStop=/opt/romopad/romopad.py --svc stop
+
+
+[Install]
+WantedBy=default.target

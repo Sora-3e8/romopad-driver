@@ -29,10 +29,8 @@ Install
 To install execute following in terminal <strong>[This requires root access]</strong>:
 
 	git clone 
-	make
-	make install
-	sudo systemctl enable --now macroboard_driver.service
-
+	sudo make install
+	systemctl --user enable --now romopad.service
 
 Requirements
 ---------------
@@ -48,7 +46,7 @@ The key map of the physical device to configuration names described in the image
 
 Configuration
 ---------------
-<h3>/etc/macroboard/layout.xml</h3>
+<h3>/home/$USER/romopad/layout.xml:</h3>
 
 ```
 <?xml version="1.0" encoding="UTF-8"?>
@@ -88,18 +86,23 @@ following capabilities:
 2. Mouse emulation rel_movement;buttons press;release;hold
 3. Executing system commands and starting apps
 
+Security concerns
+---------------
+Under no circumstances do not run any of the binaries as root.
+If you fail to do so consquences will crash due to visual indicator or possible opening of attack vector for privilege escalation
+
 Supported signals
 ---------------
 <strong>Supported signals can be found in linux sourcode header: <a href="https://github.com/torvalds/linux/blob/master/include/uapi/linux/input-event-codes.h">Supported signals</a><br></strong>
-Please be reasonable, don't expect some weird signals to work. The keyboard and mouse signals should all work.<br>
+Please be reasonable, don't expect some weird signals to work. The keyboard and mouse signals shnavoidable issue which comes from the command execution feature.>
 It could also be possible to include joystick or gamepad signals, but mapping there is much more complicated due to layout shifting when some features get included,<br> also detection is dependent on hid identification so it does not really make sense to include support for those as many games would not recognize them anyway.
 
 Uninstall
 ---------------
 To remove simply execute:
 ```
-sudo systemctl disable --now macroboard_driver.service
-make uninstall
+systemctl --user disable --now macroboard_driver.service
+sudo make uninstall
 ```
 
 

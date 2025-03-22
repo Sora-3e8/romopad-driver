@@ -2,9 +2,11 @@ import asyncio
 import evdev
 import evdev.ecodes as e
 import os
+import subprocess as sp
 import time
 import config_loader
-
+import threading
+from indicator import indicator as layer_indicator
 keep_alive = 1
 supported_devs = [{"vendor":4489,"product":34880,"version":513}]
 devnames = [{"name":"Acer Communications & Multimedia USB Composite Device","vendor":4489,"product":34880,"version":513}]
@@ -40,16 +42,20 @@ def layer_control(virtual_device,arg,key_value):
     global clayer
 
     if key_value == 0 and arg == "next":
+        print("Switching to next layer")
         if clayers.index(clayer)+1 > (len(clayers)-1):
             clayer = clayers[0]
         else:
             clayer=clayers[clayers.index(clayer)+1]
 
     if key_value == 0 and arg == "prev":
+        print("Switching to next layer")
         if clayers.index(clayer)-1 > 0:
             clayer = clayers[len(layers)-1]
         else:
-            clayer=clayers[clayers.index(clayer)-1]        
+            clayer=clayers[clayers.index(clayer)-1]
+    if key_value == 0:
+        os.system("./indicator.py "+str(clayer)) 
 
 def load_capabilities(layout_map):
     key_ev_list = [e.BTN_MOUSE]
@@ -99,7 +105,11 @@ def trigg_key_event(virtual_device,keys,value):
             virtual_device.write(e.EV_KEY,getattr(e,keys),value)
             virtual_device.syn()
 
-EVENT_HANDLER = {"layer_control":layer_control,"key":trigg_key_event}
+def unix_command(virtual_device,arg,key_value):
+    if key_value == 0 or key_value == 2:
+        os.system(arg+" & disown")
+
+EVENT_HANDLER = {"layer_control":layer_control,"key":trigg_key_event, "command":unix_command}
 def start_driver():
     global keymap
     global clayers
@@ -129,10 +139,6 @@ def start_driver():
     virtual_device = evdev.UInput(cap, name="Macroboard",version=1)
     print("Virtual device created")
     read_loop(keymap,selected_device, virtual_device)
-
-
-
-
 
 def read_loop(keymap,selected_device, virtual_device):
     global clayer
