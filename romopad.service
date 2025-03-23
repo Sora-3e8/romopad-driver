@@ -1,12 +1,13 @@
 [Unit]
 Description=Translates macropad input to usable signals
+After=graphical-session.target
 
 [Service]
+Environment="DISPLAY=:0"
 WorkingDirectory=/opt/romopad
 ExecStart=/opt/romopad/romopad.py --svc start
 ExecStop=/opt/romopad/romopad.py --svc stop
 KillMode=process
-
 
 [Install]
 WantedBy=default.target
