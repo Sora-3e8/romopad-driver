@@ -92,14 +92,17 @@ class session():
 
 # Logical section service
 class service():
+    service_daemon= None
     # Starts service daemon, checks if no other session is running by checking if there's existing socketfile
     @staticmethod
     def start_svc():
         global keep_sock
+        global sock_dir
         keep_sock = True 
-        exit() if os.path.exists(sock_dir) and session.check_if_alive() else threading.Thread(target=session.start).start()
-        threading.Thread(target=macropad_daemon.start_driver).start()
-
+        print("Instance already running. Please stop the instance.\n If no active remove the session lock:\n"+sock_dir);exit() if os.path.exists(sock_dir) |os.path.exists(sock_dir) and session.check_if_alive() else threading.Thread(target=session.start).start()
+        service_daemon = threading.Thread(target=macropad_daemon.start_driver) 
+        service_daemon.daemon = True
+        service_daemon.start()
     # Stops service daemon
     @staticmethod
     def stop_svc():

@@ -134,6 +134,8 @@ def start_driver():
                     selected_device = indev
         # Delays repetition by 3 secs to avoid overload
         time.sleep(3)
+    for val in dir(selected_device):
+        print(val)
 
     selected_device.grab() 
     cap = load_capabilities(keymap)
@@ -145,19 +147,25 @@ def read_loop(keymap,selected_device, virtual_device):
     global clayer
     # If the device is valid the driver will enter translating phase
     # Virtual device "Macroboard" is created and the translating starts 
-    while keep_alive==1:
-        event = selected_device.read_one()
-        if event != None and event.type == evdev.ecodes.EV_KEY :
-            ev = evdev.categorize(event)
-            if hwtrans_layer[ev.keycode] in keymap["global"]:
-                ev_type = keymap["global"][hwtrans_layer[ev.keycode]]["type"]
-                ev_arg = keymap["global"][hwtrans_layer[ev.keycode]]["args"]
-                EVENT_HANDLER[ev_type](virtual_device,ev_arg,ev.event.value)
-            else:
-                if hwtrans_layer[ev.keycode] in keymap["layers"][clayer]: 
-                    ev_type = keymap["layers"][clayer][hwtrans_layer[ev.keycode]]["type"]
-                    ev_arg = keymap["layers"][clayer][hwtrans_layer[ev.keycode]]["args"]
-                    EVENT_HANDLER[ev_type](virtual_device,ev_arg,ev.event.value)
+    while True:
+        dev_events = None
+        try:
+            dev_events=selected_device.async_read_loop()
+        except Exception as e:
+            print("Dev Path:",selected_device.path)
+        if dev_events != None:
+            for event in dev_events:
+                if event != None and event.type == evdev.ecodes.EV_KEY :
+                    ev = evdev.categorize(event)
+                    if hwtrans_layer[ev.keycode] in keymap["global"]:
+                        ev_type = keymap["global"][hwtrans_layer[ev.keycode]]["type"]
+                        ev_arg = keymap["global"][hwtrans_layer[ev.keycode]]["args"]
+                        EVENT_HANDLER[ev_type](virtual_device,ev_arg,ev.event.value)
+                    else:
+                        if hwtrans_layer[ev.keycode] in keymap["layers"][clayer]: 
+                            ev_type = keymap["layers"][clayer][hwtrans_layer[ev.keycode]]["type"]
+                            ev_arg = keymap["layers"][clayer][hwtrans_layer[ev.keycode]]["args"]
+                            EVENT_HANDLER[ev_type](virtual_device,ev_arg,ev.event.value)
                  
     
 if __name__ == "__main__":
