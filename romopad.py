@@ -6,7 +6,7 @@ import macropad_daemon
 import threading
 sock_dir="/tmp/romopadsvc_control.socket"
 keep_sock = True
-
+global DEBUG
 class NoInit(type):
     def __new__(cls, name, bases, dct):
         # Add custom behavior here
@@ -41,7 +41,6 @@ class session():
                 sock_session, clidress = intsock.accept()
             except Exception as e:
                 keep_sock = False
-                macropad_daemon.keep_alive = False
                 print("Starting daemon listener failed with Exception:\n",e)
                 break
             # Data loop, closes upon transfer complete
@@ -51,7 +50,6 @@ class session():
                     session.handler[data]()
                 else:
                     if not data: break
-        macropad_daemon.keep_alive = False
         sock_session.close()
         os.unlink(sock_dir) if os.path.exists(sock_dir) else next
 
@@ -99,7 +97,11 @@ class service():
         global keep_sock
         global sock_dir
         keep_sock = True 
-        print("Instance already running. Please stop the instance.\n If no active remove the session lock:\n"+sock_dir);exit() if os.path.exists(sock_dir) |os.path.exists(sock_dir) and session.check_if_alive() else threading.Thread(target=session.start).start()
+        if os.path.exists(sock_dir) or os.path.exists(sock_dir) and session.check_if_alive():
+             print("Another active session detected.\n","Before running stop the previous session.\n","If no session active remove the session lock:",sock_dir)
+             exit() 
+        else:
+            threading.Thread(target=session.start).start()
         service_daemon = threading.Thread(target=macropad_daemon.start_driver) 
         service_daemon.daemon = True
         service_daemon.start()

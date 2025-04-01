@@ -7,11 +7,11 @@ import time
 import config_loader
 import threading
 from indicator import indicator as layer_indicator
-keep_alive = 1
+selected_device = None
 supported_devs = [{"vendor":4489,"product":34880,"version":513}]
 devnames = [{"name":"Acer Communications & Multimedia USB Composite Device","vendor":4489,"product":34880,"version":513}]
 clayer = "0"
-
+DEBUG = False
 # This cannot be changed by user => Translates easy to understand keynames to signal codes emitted by device, used to translate user 
 # hardware layout names to emitted signals names see: macroboard_map.png
 
@@ -37,29 +37,33 @@ hwtrans_layer = {
 }
 
 def layer_control(virtual_device,arg,key_value):
+    global DEBUG
     global clayers
     global clayer
 
     if key_value == 0 and arg == "next":
-        print("Switching to next layer")
         if clayers.index(clayer)+1 > (len(clayers)-1):
             clayer = clayers[0]
         else:
             clayer=clayers[clayers.index(clayer)+1]
+        print("Switched to next layer: ", clayer)
 
     if key_value == 0 and arg == "prev":
-        print("Switching to next layer")
         if clayers.index(clayer)-1 > 0:
             clayer = clayers[len(layers)-1]
         else:
             clayer=clayers[clayers.index(clayer)-1]
+        if DEBUG: print("Switched to next layer: ", clayer)
+
     if key_value == 0:
         os.system("./indicator.py "+str(clayer)) 
 
 def load_capabilities(layout_map):
+    global DEBUG
     key_ev_list = [e.BTN_MOUSE]
     mouse_evs = [e.ABS_X]
-    print("Loading keyevents...")
+
+    if DEBUG: print("Loading key events...")
     
     for bind in layout_map["global"].keys():
         if layout_map["global"][bind]["type"] == "key":
@@ -82,9 +86,9 @@ def load_capabilities(layout_map):
                     if hasattr(e, layout_map["layers"][layer][bind]["args"]) and getattr(e,layout_map["layers"][layer][bind]["args"]) not in key_ev_list:
                         key_ev_list.append(getattr(e,layout_map["layers"][layer][bind]["args"]))
 
-    print("Key caps:",key_ev_list)
+    if DEBUG: print("Key caps:",key_ev_list)
     cap = {e.EV_KEY:key_ev_list}
-    print("Capabilities assembled")
+    if DEBUG: print("Capabilities assembled")
     return cap
 
 def trigg_key_event(virtual_device,keys,value):
@@ -111,68 +115,67 @@ def unix_command(virtual_device,arg,key_value):
 
 EVENT_HANDLER = {"layer_control":layer_control,"key":trigg_key_event, "command":unix_command}
 
-async def read_loop(keymap, virtual_device):
-    selected_device = None
+# Searches for devices on list of supported devices
+# Selects device once, supported device found
+# Supports only one device at a time though
+async def get_target_device():
+    global selected_device
+
+    while selected_device == None:
+        # Loads available devices
+        devices = [evdev.InputDevice(path) for path in evdev.list_devices()]
+        # Loops through available devices until it finds 
+        for device in devices:
+            devinfo = device.info
+            # Checks if the device is the targeted by the driver and preloads it into indev
+            if {"vendor":devinfo.vendor,"product":devinfo.product,"version":devinfo.version} in supported_devs: 
+                indev = evdev.device.InputDevice(device)
+                # As the target device has two nodes one with ABS capabilities, the abs supporting device is selected
+                if ("EV_ABS",3) in indev.capabilities(verbose=True):
+                    selected_device = indev
+        # Delays repetition by 3 secs to avoid overload
+        await asyncio.sleep(3)
+    print("Device connected")
+    selected_device.grab()
+
+# Handles every event of the driver
+async def daemon_loop(keymap, virtual_device):
+    global selected_device
     global clayer
-    # If the device is valid the driver will enter translating phase
-    # Virtual device "Macroboard" is created and the translating starts 
+    
     while True:
-        if selected_device!= None and os.path.exists(selected_device.path): 
-            try:
-                for event in selected_device.async_read_loop():
-                    if event != None and event.type == evdev.ecodes.EV_KEY :
-                        ev = evdev.categorize(event)
-                        if hwtrans_layer[ev.keycode] in keymap["global"]:
-                            ev_type = keymap["global"][hwtrans_layer[ev.keycode]]["type"]
-                            ev_arg = keymap["global"][hwtrans_layer[ev.keycode]]["args"]
+        print("Waiting for device")
+        await get_target_device()
+        try:
+            for event in selected_device.async_read_loop():
+                if event != None and event.type == evdev.ecodes.EV_KEY :
+                    ev = evdev.categorize(event)
+                    if hwtrans_layer[ev.keycode] in keymap["global"]:
+                        ev_type = keymap["global"][hwtrans_layer[ev.keycode]]["type"]
+                        ev_arg = keymap["global"][hwtrans_layer[ev.keycode]]["args"]
+                        EVENT_HANDLER[ev_type](virtual_device,ev_arg,ev.event.value)
+                    else:
+                        if hwtrans_layer[ev.keycode] in keymap["layers"][clayer]: 
+                            ev_type = keymap["layers"][clayer][hwtrans_layer[ev.keycode]]["type"]
+                            ev_arg = keymap["layers"][clayer][hwtrans_layer[ev.keycode]]["args"]
                             EVENT_HANDLER[ev_type](virtual_device,ev_arg,ev.event.value)
-                        else:
-                            if hwtrans_layer[ev.keycode] in keymap["layers"][clayer]: 
-                                ev_type = keymap["layers"][clayer][hwtrans_layer[ev.keycode]]["type"]
-                                ev_arg = keymap["layers"][clayer][hwtrans_layer[ev.keycode]]["args"]
-                                EVENT_HANDLER[ev_type](virtual_device,ev_arg,ev.event.value)
-            except Exception as e:
-                print(e)
-
-        else:
-            while selected_device == None:
-                # Loads available devices
-                devices = [evdev.InputDevice(path) for path in evdev.list_devices()]
-                # Loops through available devices until it finds 
-                for device in devices:
-                    devinfo = device.info
-                    # Checks if the device is the targeted by the driver and preloads it into indev
-                    if {"vendor":devinfo.vendor,"product":devinfo.product,"version":devinfo.version} in supported_devs: 
-                        indev = evdev.device.InputDevice(device)
-                        # As the target device has two nodes one with ABS capabilities, the abs supporting device is selected
-                        if ("EV_ABS",3) in indev.capabilities(verbose=True):
-                            selected_device = indev
-                # Delays repetition by 3 secs to avoid overload
-                await asyncio.sleep(3)
-            selected_device.grab()
-
-def start_loop(keymap,virtual_device):
-    try:
-        loop = asyncio.new_event_loop()
-        loop.run_until_complete(read_loop(keymap,virtual_device))
-    except:
-        start_loop(keymap,virtual_device)
+        except OSError as e:
+            if e.errno == 19:
+                print("Device unplugged")
+            selected_device.close()
+            selected_device = None
 
 
-
-def start_driver():
+def start_driver(show_debug=False):
+    global DEBUG
     global keymap
     global clayers
-
+    DEBUG = show_debug
     # Loads keymapping and all layers from configuration file
     keymap=config_loader.load()
     clayers = list(keymap["layers"].keys()) 
     selected_device = None
-    # Repeats until target device is found and selected
-    for val in dir(selected_device):
-        print(val)
-
     cap = load_capabilities(keymap)
     virtual_device = evdev.UInput(cap, name="Macroboard",version=1)
-    print("Virtual device created")
-    start_loop(keymap,virtual_device)
+    if DEBUG: print("Virtual device created")
+    asyncio.run(daemon_loop(keymap,virtual_device))

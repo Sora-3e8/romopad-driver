@@ -89,7 +89,7 @@ def construct_dict(layout):
     layers = None
     layout_object["global"]={}
     layout_object["layers"]={}
-    print("Found array: ",layout.findall("."))
+
     if len(layout.findall("."))<1:
         print("Invalid configuration: No layout defined")
 
