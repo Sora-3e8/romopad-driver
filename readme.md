@@ -28,8 +28,8 @@ Install
 ---------------
 To install execute following in terminal <strong>[This requires root access]</strong>:
 
-	git clone 
-	sudo make install
+	git clone https://github.com/Sora-3e8/romopad-driver 
+	make install
 	systemctl --user enable --now romopad.service
 
 Requirements
@@ -94,7 +94,7 @@ following capabilities:
 Security concerns
 ---------------
 Under no circumstances do not run any of the binaries as root.
-If you fail to do so consquences will crash due to visual indicator or possible opening of attack vector for privilege escalation
+If you fail to do so layer indicator may crash whole service because it won't be able to access display and you will open your self to pontential privilege escalation vulnerability
 
 Supported signals
 ---------------
