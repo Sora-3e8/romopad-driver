@@ -73,6 +73,11 @@ Configuration
       <bind keys="KEY_03" type="key">KEY_KP8</bind>
       <bind keys="KEY_04" type="key">KEY_KP9</bind>
   </layer>
+  <layer id="AppLauncher">
+    <bind keys="KEY_01" type="command">exec nautilus</bind>
+    <bind keys="KEY_02" type="command">exec $BROWSER</bind>
+    <bind keys="KEY_03" type="command">exec notify-send "Macropad" "$(cowsay 'Moo from your macropad.')"</bind> 
+  </layer>
 </layout>
 ```
 
