@@ -132,7 +132,6 @@ def load():
         generate_default()
         print("\n".join(default_config.split("\n")[1:]))
         loaded_xml=ET.fromstring(default_config)
-
     return construct_dict(loaded_xml) 
 
 

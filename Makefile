@@ -4,8 +4,10 @@ install:
 	@echo "Created app directory '/opt/romopad/'"
 	@sudo mkdir /opt/romopad/
 	@echo "Copying files..."
-	@sudo cp -r .venv /opt/romopad/
-	@sudo cp *.py /opt/romopad/
+	@sudo cp -R * /opt/romopad/
+	@sudo cp -R .venv /opt/romopad/
+	@sudo rm /opt/romopad/Makefile
+	@sudo rm -rf /opt/romopad/__pycache__
 	@echo "File copying completed"
 	@echo "Adjusting service file"
 	@./prepare_service
