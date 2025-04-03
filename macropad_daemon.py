@@ -8,6 +8,7 @@ import time
 import libs.config_loader as config_loader
 import threading
 import sys
+import datetime
 
 supported_devs = [{"vendor":4489,"product":34880,"version":513}]
 devnames = [{"name":"Acer Communications & Multimedia USB Composite Device","vendor":4489,"product":34880,"version":513}]
@@ -17,6 +18,30 @@ class macropad:
     clayers = []
     clayer = "0"
     keymap = None
+    last_layer_change_stamp = None
+    def layer_control(virtual_device,arg,key_value):
+        global DEBUG
+        time_stamp_now = datetime.datetime.now()
+        if macropad.last_layer_change_stamp == None or (time_stamp_now-macropad.last_layer_change_stamp).microseconds/10> 100:
+            if key_value == 0 and arg == "next":
+                if macropad.clayers.index(macropad.clayer)+1 > (len(macropad.clayers)-1):
+                    macropad.clayer = macropad.clayers[0]
+                else:
+                    macropad.clayer=macropad.clayers[macropad.clayers.index(macropad.clayer)+1]
+                if DEBUG: print("Switched to next layer: ", macropad.clayer)
+
+            if key_value == 0 and arg == "prev":
+                if macropad.clayers.index(macropad.clayer)-1 > 0:
+                    macropad.clayer = macropad.clayers[len(macropad.layers)-1]
+                else:
+                    macropad.clayer=macropad.clayers[macropad.clayers.index(macropad.clayer)-1]
+                if DEBUG: print("Switched to prev layer: ", macropad.clayer)
+
+            if key_value == 0:
+                os.system("./indicator.py "+str(macropad.clayer))
+
+            macropad.last_layer_change_stamp = time_stamp_now
+
 
 
 class driver:
@@ -80,26 +105,6 @@ class driver:
         if DEBUG: print("Capabilities assembled")
         return cap
 
-    def layer_control(virtual_device,arg,key_value):
-        global DEBUG
-
-        if key_value == 0 and arg == "next":
-            if macropad.clayers.index(macropad.clayer)+1 > (len(macropad.clayers)-1):
-                macropad.clayer = macropad.clayers[0]
-            else:
-                macropad.clayer=macropad.clayers[macropad.clayers.index(macropad.clayer)+1]
-            if DEBUG: print("Switched to next layer: ", macropad.clayer)
-
-        if key_value == 0 and arg == "prev":
-            if macropad.clayers.index(macropad.clayer)-1 > 0:
-                macropad.clayer = macropad.clayers[len(macropad.layers)-1]
-            else:
-                macropad.clayer=macropad.clayers[macropad.clayers.index(macropad.clayer)-1]
-            if DEBUG: print("Switched to prev layer: ", macropad.clayer)
-
-        if key_value == 0:
-            os.system("./indicator.py "+str(macropad.clayer))
-
     def trigg_key_event(virtual_device,keys,value):
         # Handles multi key bind
         if "+" in keys:
@@ -122,7 +127,7 @@ class driver:
             #os.spawnve(os.P_NOWAIT,arg.split(" ")[0],arg.split(" ")[1:],os.environ)
             sp.Popen(arg,shell=True,stdout=sp.DEVNULL,stderr=sp.DEVNULL,start_new_session=True)
 
-    EVENT_HANDLER = {"layer_control":layer_control,"key":trigg_key_event, "command":unix_command}
+    EVENT_HANDLER = {"layer_control":macropad.layer_control,"key":trigg_key_event, "command":unix_command}
 
     # Handles every event of the driver
     async def event_loop(keymap, virtual_device):
