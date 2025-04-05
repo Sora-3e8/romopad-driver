@@ -1,6 +1,6 @@
 Romoral Macropad driver
 ===============
-<img src="macropad_product.png" width="80%">
+<img src="macropad_product.png" width="100%">
 
 
 Introduction
