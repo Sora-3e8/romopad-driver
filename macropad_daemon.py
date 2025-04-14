@@ -1,4 +1,5 @@
-from indicator import indicator as layer_indicator
+import indicator_gtk as indicator
+from dotenv import load_dotenv
 import asyncio
 import evdev
 import evdev.ecodes as e
@@ -38,7 +39,7 @@ class macropad:
                 if DEBUG: print("Switched to prev layer: ", macropad.clayer)
 
             if key_value == 0:
-                os.system("./indicator.py "+str(macropad.clayer))
+                sp.Popen(f"./indicator.py {str(macropad.clayer)}",stderr=sp.DEVNULL,stdout=sp.DEVNULL,shell=True, start_new_session = True)
 
             macropad.last_layer_change_stamp = time_stamp_now
 
@@ -123,9 +124,13 @@ class driver:
                 virtual_device.syn()
 
     def unix_command(virtual_device,arg,key_value):
+        global DEBUG
         if key_value == 0 or key_value == 2:
-            #os.spawnve(os.P_NOWAIT,arg.split(" ")[0],arg.split(" ")[1:],os.environ)
-            sp.Popen(arg,shell=True,stdout=sp.DEVNULL,stderr=sp.DEVNULL,start_new_session=True)
+            load_dotenv()
+            print("Res:",{False:{"shell":True,"stdout":sp.DEVNULL,"stderr":sp.DEVNULL,"start_new_session":True},True:{"shell":True,"start_new_session":True}}[DEBUG])
+            sp.Popen(arg, **{False:{"shell":True,"stdout":sp.DEVNULL,"stderr":sp.DEVNULL,"start_new_session":True},True:{"shell":True,"start_new_session":True}}[DEBUG])
+
+
 
     EVENT_HANDLER = {"layer_control":macropad.layer_control,"key":trigg_key_event, "command":unix_command}
 

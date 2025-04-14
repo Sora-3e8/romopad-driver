@@ -1,4 +1,4 @@
-#!.venv/bin/python
+#!/opt/romopad/.venv/bin/python
 import argparse
 import signal
 import sys

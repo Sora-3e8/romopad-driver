@@ -10,9 +10,8 @@ install:
 	@sudo rm -rf /opt/romopad/__pycache__
 	@echo "File copying completed"
 	@echo "Adjusting service file"
-	@./prepare_service
 	@echo "Installing systemd service romopad.service..."
-	@sudo mv romopad.service.tmp /etc/systemd/user/romopad.service
+	@sudo cp romopad.service /etc/systemd/user/romopad.service
 	@echo "Installation completed"
 uninstall:
 	@echo "Checking for files..."

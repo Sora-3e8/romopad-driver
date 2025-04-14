@@ -36,7 +36,7 @@ Requirements
 ---------------
 	make
 	Python
-	pip 
+	qpip 
 
 Device layout
 ---------------

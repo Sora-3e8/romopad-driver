@@ -76,7 +76,7 @@ class socket_client:
             except Exception as e:
                 if e.errno == 111:
                     print("Unable to connect, session seems to be dead")
-                    print("If service not running remove session lock and restart service:\n",sockdir)
+                    print("If service not running remove session lock and restart service:\n",sock_dir)
                 else:
                     print(e)
         else:
