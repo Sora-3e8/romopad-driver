@@ -55,11 +55,11 @@ Remapping is split into layers where unique identifier is to be used for each la
 `<bind>` - Mandatory attribute `keys` and `type`
 
 #### Attributes:
-- keys - This attribute binds action to physical key on the device, check reference image in section Device layout
-- type - There 3 possible values key|command|layer_control
-  - key - Maps key from keys attribute to keycode inside bind tag example: `<bind keys="KEY_01" type="key">KEY_NUMLOCK</bind>`
-  - command - Maps key to trigger shell command in inside bind tag exaample:  `<bind keys="KEY_03" type="command">exec notify-send "Macropad" "Hello from your macropad!"</bind>`
-  - layer_control - Maps key from keys attribute to switch layers possible values `prev` or `next` example: `<bind keys="NOB2_LT" type="layer_control">prev</bind>`
+- keys - This attribute binds action to physical key on the device, check reference image in section Device layout<br/>
+- type - There are 3 possible values `key|command|layer_control`<br/>
+  - key - Maps key from keys attribute to keycode inside bind tag example:<br/> `<bind keys="KEY_01" type="key">KEY_NUMLOCK</bind>`<br/>
+  - command - Maps key to trigger shell command in inside bind tag example:<br/>  `<bind keys="KEY_03" type="command">exec notify-send "Macropad" "Hello from your macropad!"</bind>`<br/>
+  - layer_control - Maps key from keys attribute to switch layers possible values `prev|next` example:<br/> `<bind keys="NOB2_LT" type="layer_control">prev</bind>`<br/>
 
 <strong>Supported keycodes can be found in linux sourcode header: <a href="https://github.com/torvalds/linux/blob/master/include/uapi/linux/input-event-codes.h">Supported signals</a><br></strong>
 
@@ -101,8 +101,8 @@ Config example:
 ```
 
 ## Device layout
-The key map of the physical device to configuration names described in the image below:
-<img src="macroboard_map.png" width=720>
+- The key map of the physical device to configuration names described in the image below:<br/><br/>
+  <img src="macroboard_map.png" width=720>
 
 
 
