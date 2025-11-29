@@ -19,7 +19,7 @@ This driver utilizes python evdev module to intercept the device and translate t
 
 ## ✨ Features
 - layout layers
-- layou layer indicator
+- layout layer indicator
 - keyboard signals
 - mouse signals
 - command execution
