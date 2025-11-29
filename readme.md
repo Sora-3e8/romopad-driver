@@ -3,7 +3,7 @@
 Romoral Macropad driver
 ===============
 
-User-space level driver for remapping of Romoral macropad.
+User-space level driver for remapping of Romoral macropad.<br/>
 This driver utilizes python evdev module to intercept the device and translate the signals.
 
 ## Dependencies
