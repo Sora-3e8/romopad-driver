@@ -27,18 +27,18 @@ This driver utilizes python evdev module to intercept the device and translate t
   
 ## 📦 Installation
 To install execute as root:
-```
-git clone https://github.com/Sora-3e8/romopad-driver
-cd romopad-driver
-make install
-systemctl --user enable --now romopad.service
+```bash
+$ git clone https://github.com/Sora-3e8/romopad-driver
+$ cd romopad-driver
+$ make install
+$ systemctl --user enable --now romopad.service
 ```
 
 ## Uninstall
 To remove execute as root:
-```
-systemctl --user disable --now macroboard_driver.service
-sudo make uninstall
+```bash
+$ systemctl --user disable --now macroboard_driver.service
+$ sudo make uninstall
 ```
 
 ## ⚠️  Cautions to Note
@@ -49,8 +49,8 @@ sudo make uninstall
 - In some environments the layer indicator may not show up, this is an issue caused by systemd not being able to pass the wayland display variable as it was not set yet
 - This occurs for example in wm managers as it's impossible to tell if session has already started
 - The usual quick fix is to restart the service after logging into session:<br/>
-  ```
-  systemctl --user restart romopad.service
+  ```bash
+  $ systemctl --user restart romopad.service
   ```
 - For this reason it's highly recommended for wm manager sessions, to start the service using the wm itself
 - Example Hyprland: `exec-once = systemctl --user start romopad.service`
@@ -75,11 +75,9 @@ Remapping is split into layers where unique identifier is to be used for each la
 
 <strong>Supported keycodes can be found in linux sourcode header: <a href="https://github.com/torvalds/linux/blob/master/include/uapi/linux/input-event-codes.h">Supported signals</a><br></strong>
 
-Config example:
+#### Example configuration `~/.config/romopad/layout.xml` :
 
-`~/.config/romopad/layout.xml`:</h3>
-
-```
+```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <layout>
   <static-layer>
