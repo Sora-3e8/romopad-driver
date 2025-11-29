@@ -27,7 +27,8 @@ This driver utilizes python evdev module to intercept the device and translate t
 ## 📦 Installation
 To install execute as root:
 ```
-git clone https://github.com/Sora-3e8/romopad-driver 
+git clone https://github.com/Sora-3e8/romopad-driver
+cd romopad-driver
 make install
 systemctl --user enable --now romopad.service
 ```
