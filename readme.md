@@ -1,19 +1,18 @@
 ![Header](./macropad_product.png)
+
 Romoral Macropad driver
 ===============
 
 User-space level driver for remapping of Romoral macropad.
 This driver utilizes python evdev module to intercept the device and translate the signals.
 
-Dependencies
----------------
-  Python
-  python-evdev (automatically fetched by venv)
-  make
-  pip
+## Dependencies
+ - Python
+ - Pip
+ - python-evdev (automatically fetched by venv)
+ - make
 
-🎯 Scope
----------------
+# 🎯 Scope
 - Target device: Romoral factory 12 key macropad
 - OS: Linux
 - Window servers: Wayland, Xorg (untested)
@@ -24,17 +23,25 @@ Dependencies
 - mouse signals
 - command execution
 
+  
+# 📦 Installation
+To install execute as root:
+```
+git clone https://github.com/Sora-3e8/romopad-driver 
+make install
+systemctl --user enable --now romopad.service
+```
+
+# Uninstall
+To remove execute as root:
+```
+systemctl --user disable --now macroboard_driver.service
+sudo make uninstall
+```
+
 # ⚠️  Cautions to Note
 - Romoral macropad uses generic id, which may inadvertently remap other generic devices sharing the same id,<br>including some Acer devices
 - Under no circumstances should the program be run with root privileges.<br/>
-
-📦 Install
----------------
-To install execute following in terminal <strong>[This requires root access]</strong>:
-
-	git clone https://github.com/Sora-3e8/romopad-driver 
-	make install
-	systemctl --user enable --now romopad.service
 
 # 🔧 Configuration
 The configuration uses xml format, where you define in each layer and binds, the parent node is <layout> and is mandatory along side with at least one layer.
@@ -93,17 +100,9 @@ Config example:
 </layout>
 ```
 
-Device layout
----------------
+# Device layout
 The key map of the physical device to configuration names described in the image below:
 <img src="macroboard_map.png" width=720>
 
-Uninstall
----------------
-To remove simply execute:
-```
-systemctl --user disable --now macroboard_driver.service
-sudo make uninstall
-```
 
 
