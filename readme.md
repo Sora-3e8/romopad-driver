@@ -111,7 +111,6 @@ Remapping is split into layers where unique identifier is to be used for each la
 ```
 
 ## Device layout
-- The key map of the physical device to configuration names described in the image below:<br/><br/>
   <img src="macroboard_map.png" width=720>
 
 
