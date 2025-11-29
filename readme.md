@@ -48,9 +48,9 @@ sudo make uninstall
 ## 🐞 Known issues
 - In some environments the layer indicator may not show up, this is an issue caused by systemd not being able to pass the wayland display variable as it was not set yet
 - This occurs for example in wm managers as it's impossible to tell if session has already started
-- The usual quick fix is to restart the service after logging into session: `systemctl --user restart romopad.service`
+- The usual quick fix is to restart the service after logging into session: ```systemctl --user restart romopad.service```
 - For this reason it's highly recommended to start the service through thw wm manager itself
-- Example Hyprland: `exec-once = systemctl --user start romopad.service`
+- Example Hyprland: ```exec-once = systemctl --user start romopad.service```
 
 ## 🔧 Configuration
 The configuration uses xml format, where you define in each layer and binds, the parent node is <layout> and is mandatory along side with at least one layer.
