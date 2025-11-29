@@ -19,6 +19,7 @@ This driver utilizes python evdev module to intercept the device and translate t
 
 ## ✨ Features
 - layout layers
+- layou layer indicator
 - keyboard signals
 - mouse signals
 - command execution
@@ -43,6 +44,13 @@ sudo make uninstall
 ## ⚠️  Cautions to Note
 - Romoral macropad uses generic id, which may inadvertently remap other generic devices sharing the same id,<br>including some Acer devices
 - Under no circumstances should the program be run with root privileges.<br/>
+
+## 🐞 Known issues
+- In some environments the layer indicator may not show up, this is an issue caused by systemd not being able to pass the wayland display variable as it was not set yet
+- This occurs for example in wm managers as it's impossible to tell if session has already started
+- The usual quick fix is to restart the service after logging into session: `systemctl --user restart romopad.service`
+- For this reason it's highly recommended to start the service through thw wm manager itself
+- Example Hyprland: `exec-once = systemctl --user start romopad.service`
 
 ## 🔧 Configuration
 The configuration uses xml format, where you define in each layer and binds, the parent node is <layout> and is mandatory along side with at least one layer.
