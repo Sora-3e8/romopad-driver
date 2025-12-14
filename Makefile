@@ -10,7 +10,7 @@ install:
 	@sudo rm -rf /opt/romopad/__pycache__
 	@echo "File copying completed"
 	@echo "Adding input rules"
-	@echo 'KERNEL=="uinput", GROUP="input", MODE:="0660"'>/etc/udev/rules.d/99-uinput.rules
+	@sudo echo 'KERNEL=="uinput", GROUP="input", MODE:="0660"'>/etc/udev/rules.d/99-uinput.rules
 	@sudo udevadm control --reload-rules
 	@sudo udevadm trigger
 	@echo "Installing systemd service romopad.service..."
