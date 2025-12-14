@@ -1,9 +1,9 @@
 [Unit]
 Description=Translates macropad input to usable signals
-PartOf=graphical-session.target
 After=graphical-session.target
 
 [Service]
+Environment="DISPLAY=$DISPLAY"
 WorkingDirectory=/opt/romopad/
 ExecStart=/opt/romopad/romopad --svc start
 ExecStop=/opt/romopad/romopad --svc stop

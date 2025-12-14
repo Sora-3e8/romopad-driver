@@ -16,7 +16,8 @@ class indicator:
         window_height = 180
         position_right = int(round(layout.winfo_screenwidth()*0.92,0))
         position_top = int(round(layout.winfo_screenheight()*0.04,0))
-        layout.geometry(f'{window_width}x{window_height}+{position_right}+{position_top}') 
+        layout.geometry(f'{window_width}x{window_height}+{position_right}+{position_top}')
+        layout.wm_attributes("-topmost",True)
         layout.wm_attributes("-type", "notification")
         layout.overrideredirect(True)
         layout.wm_attributes("-topmost",True)
