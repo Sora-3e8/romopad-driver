@@ -14,8 +14,11 @@ class indicator:
         layout.configure(bg="#2C2C3B")
         window_width = 250
         window_height = 180
-        position_right = int(round(layout.winfo_screenwidth()*0.92,0))
-        position_top = int(round(layout.winfo_screenheight()*0.04,0))
+        gap = - int(round((layout.winfo_screenwidth()/100)*2))
+        position_right = layout.winfo_screenwidth() - int(round(window_width)) + gap
+        position_top = -gap
+        print(position_top)
+        print(position_right)
         layout.geometry(f'{window_width}x{window_height}+{position_right}+{position_top}')
         layout.wm_attributes("-topmost",True)
         layout.wm_attributes("-type", "notification")

@@ -1,54 +1,89 @@
+![Header](./macropad_product.png)
+
 Romoral Macropad driver
 ===============
-<img src="macropad_product.png" width="100%">
 
-
-Introduction
----------------
-So you bought Chinese macropad?
-Figured out that not only you have actually no leds, layer functionality and driver is some suspicious sofware, which definitely isn't windows only available chinese spyware, but that it emits useless keys by default? 
-Well if so this driver might be for you.
-	
+User-space level driver for remapping of Romoral macropad.<br/>
 This driver utilizes python evdev module to intercept the device and translate the signals.
 
-Scope
----------------
-Target device: Romoral factory 12 key macropad<br>
-This driver is primarily designed for Linux with platform wayland in mind.
-Xorg is untested! This driver may work on Xorg, but was never tested on the Xorg as it's obsolete and will be phased gradually phased out.
+>[!NOTE]
+> Romoral macropad uses generic Acer dev id, which may inadvertently remap other devices with the same id
+> This may affect some Acer and generic devices
 
-Possible caveats
----------------
-This driver hooks device based on vendor,product and version ids.<br>
-Romoral macropad seems to use identification of <strong>Acer Communications & Multimedia USB Composite Device</strong>.   
-Which is quite generic. Some Acer or other devices may share the same ids as this macropad.<br>
-So if you have an Acer usb device bear in mind this can conflict with it, if it would happen to have the same ids.
+## Dependencies
+ - Python
+ - Pip
+ - python-evdev (automatically fetched by venv)
+ - make
 
-Install
----------------
-To install execute following in terminal <strong>[This requires root access]</strong>:
+## 🎯 Scope
+- Target device: Romoral factory 12 key macropad
+- OS: Linux
+- Window servers: Wayland, Xorg (untested)
 
-	git clone https://github.com/Sora-3e8/romopad-driver 
-	make install
-	systemctl --user enable --now romopad.service
+## ✨ Features
+- layout layers
+- layout layer indicator
+- keyboard signals
+- mouse signals
+- command execution
 
-Requirements
----------------
-	make
-	Python
-	qpip 
-
-Device layout
----------------
-The key map of the physical device to configuration names described in the image below:
-
-<img src="macroboard_map.png" width=720>
-
-Configuration
----------------
-<h3>/home/$USER/romopad/layout.xml:</h3>
-
+  
+## 📦 Installation
+To install execute as root:
+```bash
+$ git clone https://github.com/Sora-3e8/romopad-driver
+$ cd romopad-driver
+$ sudo make install
+$ systemctl --user daemon-reload
+$ systemctl --user enable --now romopad.service
 ```
+
+> [!IMPORTANT]
+> Make sure you're in the "input" userg roup, otherwise the driver won't work
+> You can add yourself using following commands:
+> [Arch,Fedora,rhel]: `sudo usermod -aG input $USER`
+> Debian: `sudo useradd -a G input $USER`
+
+> [!CAUTION]
+> Under no circumstances should the program be run with root privileges.
+> Running with root privileges opens you to privilege escalation attack via command execution.
+> Running as root will also cause layer indicator to stop work.
+
+
+## 🐞 Known issues
+- In some environments the layer indicator may not show up, this is an issue caused by systemd not being able to pass the wayland display variable as it was not set yet
+- This occurs for example in wm managers as it's impossible to tell if session has already started
+- The usual quick fix is to restart the service after logging into session:<br/>
+  ```bash
+  $ systemctl --user restart romopad.service
+  ```
+- For this reason it's highly recommended for wm manager sessions, to start the service using the wm itself
+- Example Hyprland: `exec-once = systemctl --user start romopad.service`
+
+## 🔧 Configuration
+The configuration uses xml format, where you define in each layer and binds, the parent node is <layout> and is mandatory along side with at least one layer.
+Remapping is split into layers where unique identifier is to be used for each layer.
+
+### Layer types:
+ - `<layer>` - Defines layer to which you can switch using `layer_control`, mandatory attribute `id`, id can be any text or number
+ - `<static-layer>` - Only one should be defined, but if it happens more than one is defined, the last one will be used, this bind layer is static from the name,<br/>the keybinds here will work across layers eg. layer switching action should be defined here
+
+### Bind types:
+`<bind>` - Mandatory attribute `keys` and `type`
+
+#### Attributes:
+- keys - This attribute binds action to physical key on the device, check reference image in section Device layout<br/>
+- type - There are 3 possible values `key|command|layer_control`<br/>
+  - key - Maps key from keys attribute to keycode inside bind tag example:<br/> `<bind keys="KEY_01" type="key">KEY_NUMLOCK</bind>`<br/>
+  - command - Maps key to trigger shell command in inside bind tag example:<br/>  `<bind keys="KEY_03" type="command">exec notify-send "Macropad" "Hello from your macropad!"</bind>`<br/>
+  - layer_control - Maps key from keys attribute to switch layers possible values `prev|next` example:<br/> `<bind keys="NOB2_LT" type="layer_control">prev</bind>`<br/>
+
+<strong>Supported keycodes can be found in linux sourcode header: <a href="https://github.com/torvalds/linux/blob/master/include/uapi/linux/input-event-codes.h">Supported signals</a><br></strong>
+
+#### Example configuration `~/.config/romopad/layout.xml` :
+
+```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <layout>
   <static-layer>
@@ -81,33 +116,12 @@ Configuration
 </layout>
 ```
 
+## Device layout
+  <img src="macroboard_map.png" width=720>
 
-Capabilities
----------------
-Translating key signals coming from the macropad to usable output.
-Reimplements layer functionality on software layer with 
-following capabilities:
-1. Keyboard signals press;release;hold
-2. Mouse emulation rel_movement;buttons press;release;hold
-3. Executing system commands and starting apps
-
-Security concerns
----------------
-Under no circumstances do not run any of the binaries as root.
-If you fail to do so layer indicator may crash whole service because it won't be able to access display and you will open your self to pontential privilege escalation vulnerability
-
-Supported signals
----------------
-<strong>Supported signals can be found in linux sourcode header: <a href="https://github.com/torvalds/linux/blob/master/include/uapi/linux/input-event-codes.h">Supported signals</a><br></strong>
-Please be reasonable, don't expect some weird signals to work. The keyboard and mouse signals shnavoidable issue which comes from the command execution feature.>
-It could also be possible to include joystick or gamepad signals, but mapping there is much more complicated due to layout shifting when some features get included,<br> also detection is dependent on hid identification so it does not really make sense to include support for those as many games would not recognize them anyway.
-
-Uninstall
----------------
-To remove simply execute:
+## Uninstall
+To remove execute as root:
+```bash
+$ systemctl --user disable --now macroboard_driver.service
+$ sudo make uninstall
 ```
-systemctl --user disable --now macroboard_driver.service
-sudo make uninstall
-```
-
-

@@ -1,4 +1,3 @@
-import indicator_gtk as indicator
 from dotenv import load_dotenv
 import asyncio
 import evdev

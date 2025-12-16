@@ -10,6 +10,7 @@ def show(layer):
     print(layer_label)
     layer_label.set_text(layer)
     layer_indicator.show_all()
+    print("Mouse?: " + Gdk.device.get_position())
     time.sleep(0.25)
 
 def handle():
