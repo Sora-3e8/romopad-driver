@@ -40,7 +40,7 @@ $ systemctl --user enable --now romopad.service
 ```
 
 > [!IMPORTANT]
-> Make sure you're in the "input" userg roup, otherwise the driver won't work</br>
+> Make sure you're in the "input" user group, otherwise the driver won't work</br>
 > You can add yourself using following commands:</br>
 >&nbsp;[Arch,Fedora,rhel]: `sudo usermod -aG input $USER`</br>
 >&nbsp;Debian: `sudo useradd -a G input $USER`
