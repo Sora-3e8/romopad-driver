@@ -7,8 +7,8 @@ User-space level driver for remapping of Romoral macropad.<br/>
 This driver utilizes python evdev module to intercept the device and translate the signals.
 
 >[!NOTE]
-> Romoral macropad uses generic Acer dev id, which may inadvertently remap other devices with the same id
-> This may affect some Acer and generic devices
+> Romoral macropad uses generic Acer dev id, which may inadvertently remap other devices with the same id</br>
+> This may affect some Acer and generic devices</br>
 
 ## Dependencies
  - Python
@@ -40,10 +40,10 @@ $ systemctl --user enable --now romopad.service
 ```
 
 > [!IMPORTANT]
-> Make sure you're in the "input" userg roup, otherwise the driver won't work
-> You can add yourself using following commands:
-> [Arch,Fedora,rhel]: `sudo usermod -aG input $USER`
-> Debian: `sudo useradd -a G input $USER`
+> Make sure you're in the "input" userg roup, otherwise the driver won't work</br>
+> You can add yourself using following commands:</br>
+>   [Arch,Fedora,rhel]: `sudo usermod -aG input $USER`</br>
+>   Debian: `sudo useradd -a G input $USER`
 
 > [!CAUTION]
 > Under no circumstances should the program be run with root privileges.
