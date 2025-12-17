@@ -7,8 +7,8 @@ User-space level driver for remapping of Romoral macropad.<br/>
 This driver utilizes python evdev module to intercept the device and translate the signals.
 
 >[!NOTE]
-> Romoral macropad uses generic Acer dev id, which may remap other devices with the same id</br>
-> This may affect some Acer and generic devices</br>
+> Romoral macropad uses generic Acer dev id, which may remap other devices with the same id.</br>
+> This may affect some Acer and generic devices.</br>
 
 ## 🎯 Scope
 - Target device: Romoral factory 12 key macropad
@@ -31,8 +31,8 @@ This driver utilizes python evdev module to intercept the device and translate t
   
 ## 📦 Installation
 > [!CAUTION]
-> Under no circumtances should this program be run with root privileges</br>
-> Failing to do so opens you to privilege escalation threat</br>
+> Under no circumtances should this program be run with root privileges.</br>
+> Failing to do so opens you to privilege escalation threat.</br>
 
 > [!IMPORTANT]
 > Make sure you're in the "input" user group, otherwise the driver won't work.</br></br>
@@ -60,9 +60,9 @@ $ systemctl --user enable --now romopad.service
 - For this reason it's highly recommended for wm manager sessions, to start the service using the wm itself
 - Example Hyprland: `exec-once = systemctl --user start romopad.service`
 
-- The indicator now depends on the Xorg due to Tkinter being dependent, currently there're plans to replace it with Gtk4
-  however that's still a bit far, but it will be needed to be done as Xorg is being phased out
-- This may affect users on Niri which does not directly use XWayland, but the xwayland-satellite 
+- The indicator now depends on the Xorg due to Tkinter being dependent, currently there're plans to replace it with Gtk4.
+  however that's still a bit far, but it will be needed to be done as Xorg is being phased out.
+- This may affect users on Niri which does not directly use XWayland, but the xwayland-satellite. 
 
 
 ## 🔧 Configuration
@@ -70,13 +70,14 @@ $ systemctl --user enable --now romopad.service
 
 ### Default config
 - Default config path is `~/.config/romopad/layout.xml`
-- On install default `numpad layout` config is copied into your config path
+- On install default `numpad layout` config is copied into your config path.
 
-### Layout config
-- Every configuration must have main node: `<layout>`</br>
-- All layers are to be inside the layout node
-- Configuration is defined by layers and each configuration must have at least one non-static layer, the static layer is optional,</br>
-  where each layer has optional binds - you don't have to define any
+### Config layout
+- Every config must have main node: `<layout>`</br>
+- All layers are to be inside the layout node</br>
+- Configuration is defined by layers and each configuration must have at least one non-static layer</br>
+- The static layer is optional
+- Binds in both static and non-static layer are optional
 
 ### Layers
 - Configuration has two layer types `<layer>|<static-layer>`</br>
@@ -86,7 +87,7 @@ $ systemctl --user enable --now romopad.service
 - `<static-layer>` - Static layer, cannot be swiched, only one should be defined, if more than one set the last one will be used
 
 ### Keybinds
-- Each keybind is to be defined in layer, if the layer `<static-layer>`, the binds will persist across all layers.</br>
+- Each keybind is to be defined in layer, if the layer is `<static-layer>`, the binds will persist across all layers.</br>
   
 - Bind has a mandatory attributes: `keys, type`</br>
 
