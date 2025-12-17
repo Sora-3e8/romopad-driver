@@ -30,7 +30,18 @@ This driver utilizes python evdev module to intercept the device and translate t
 
   
 ## 📦 Installation
-To install execute as root:
+> [!CAUTION]
+> Under no circumtances should this program be run with root privileges</br>
+> Failing to do so opens you to privilege escalation threat</br>
+
+> [!IMPORTANT]
+> Make sure you're in the "input" user group, otherwise the driver won't work.</br></br>
+> You can add yourself using following commands:
+> - [Arch,Fedora,rhel]: `sudo usermod -aG input $USER`</br>
+> - Debian: `sudo useradd -a G input $USER`
+
+To install execute following commands:
+
 ```bash
 $ git clone https://github.com/Sora-3e8/romopad-driver
 $ cd romopad-driver
@@ -39,20 +50,8 @@ $ systemctl --user daemon-reload
 $ systemctl --user enable --now romopad.service
 ```
 
-> [!IMPORTANT]
-> Make sure you're in the "input" user group, otherwise the driver won't work</br>
-> You can add yourself using following commands:</br>
->&nbsp;[Arch,Fedora,rhel]: `sudo usermod -aG input $USER`</br>
->&nbsp;Debian: `sudo useradd -a G input $USER`
-
-> [!CAUTION]
-> Under no circumstances should the program be run with root privileges.
-> Running with root privileges opens you to privilege escalation attack via command execution.
-> Running as root will also cause layer indicator to stop work.
-
-
 ## 🐞 Known issues
-- In some environments the layer indicator may not show up, this is an issue caused by systemd not being able to pass the wayland display variable as it was not set yet
+- In some environments the layer indicator may not show up, this is an issue caused by systemd not being able to pass the display variable as it was not set yet
 - This occurs for example in wm managers as it's impossible to tell if session has already started
 - The usual quick fix is to restart the service after logging into session:<br/>
   ```bash
@@ -61,9 +60,15 @@ $ systemctl --user enable --now romopad.service
 - For this reason it's highly recommended for wm manager sessions, to start the service using the wm itself
 - Example Hyprland: `exec-once = systemctl --user start romopad.service`
 
+- The indicator now depends on the Xorg due to Tkinter being dependent, currently there're plans to replace it with Gtk4
+  however that's still a bit far, but it will be needed to be done as Xorg is being phased out
+- This may affect users on Niri which does not directly use XWayland, but the xwayland-satellite 
+
+
 ## 🔧 Configuration
 The configuration uses xml format, where you define in each layer and binds, the parent node is <layout> and is mandatory along side with at least one layer.
 Remapping is split into layers where unique identifier is to be used for each layer.
+
 
 ### Layer types:
  - `<layer>` - Defines layer to which you can switch using `layer_control`, mandatory attribute `id`, id can be any text or number
@@ -81,8 +86,12 @@ Remapping is split into layers where unique identifier is to be used for each la
 
 <strong>Supported keycodes can be found in linux sourcode header: <a href="https://github.com/torvalds/linux/blob/master/include/uapi/linux/input-event-codes.h">Supported signals</a><br></strong>
 
-#### Example configuration `~/.config/romopad/layout.xml` :
+#### Configuration
 
+Configuration path: `~/.config/romopad/layout.xml`
+On install the initial configuration as a numpad is copied into current user's config path.
+
+Example configuration `layout.xml`:
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <layout>
