@@ -1,14 +1,14 @@
 ![Header](./macropad_product.png)
 
-Romoral Macropad driver
-===============
-
-User-space level driver for remapping of Romoral macropad.<br/>
-This driver utilizes python evdev module to intercept the device and translate the signals.
-
 >[!NOTE]
 > Romoral macropad uses generic Acer dev id, which may remap other devices with the same id.</br>
 > This may affect some Acer and generic devices.</br>
+
+Romoral Macropad driver
+===============
+User-space level driver for remapping of Romoral macropad.<br/>
+This driver utilizes python evdev module to intercept the device and translate the signals.
+
 
 ## 🎯 Scope
 - Target device: Romoral factory 12 key macropad
