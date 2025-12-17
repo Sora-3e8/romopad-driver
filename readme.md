@@ -66,28 +66,42 @@ $ systemctl --user enable --now romopad.service
 
 
 ## 🔧 Configuration
-The configuration uses xml format, where you define in each layer and binds, the parent node is <layout> and is mandatory along side with at least one layer.
-Remapping is split into layers where unique identifier is to be used for each layer.
+  The configuration uses xml format, where you define in each layer and binds, the parent node is <layout> and is mandatory along side with at least one layer.
+  Remapping is split into layers where unique identifier is to be used for each layer.</br>
 
-
-### Default configuration path is `~/.config/romopad/layout.xml`
+### Default config
+- Default config path is `~/.config/romopad/layout.xml`
 - On install default `numpad layout` config is copied into your config path
 
-### Layer types:
- - `<layer>` - Defines layer to which you can switch using `layer_control`, mandatory attribute `id`, id can be any text or number
- - `<static-layer>` - Only one should be defined, but if it happens more than one is defined, the last one will be used, this bind layer is static from the name,<br/>the keybinds here will work across layers eg. layer switching action should be defined here
+### Layout config
+- Every configuration must have main node: `<layout>`</br>
+- All layers are to be inside the layout node
+- Configuration is defined by layers and each configuration must have at least one non-static layer, the static layer is optional,</br>
+  where each layer has optional binds - you don't have to define any
 
-### Keybinds:
-`<bind>` - Mandatory attribute `keys` and `type`
+### Layers
+- Configuration has two layer types `<layer>|<static-layer>`</br>
+  
+- `<layer>` - Switchable layer, each layer has mandatory attribute `id`, switched by `layer_control` bind</br>
 
-#### Attributes:
-- keys - This attribute binds action to physical key on the device, check reference image in section Device layout<br/>
-- type - There are 3 possible values `key|command|layer_control`<br/>
-  - key - Maps key from keys attribute to keycode inside bind tag example:<br/> `<bind keys="KEY_01" type="key">KEY_NUMLOCK</bind>`<br/>
-  - command - Maps key to trigger shell command in inside bind tag example:<br/>  `<bind keys="KEY_03" type="command">exec notify-send "Macropad" "Hello from your macropad!"</bind>`<br/>
-  - layer_control - Maps key from keys attribute to switch layers possible values `prev|next` example:<br/> `<bind keys="NOB2_LT" type="layer_control">prev</bind>`<br/>
+- `<static-layer>` - Static layer, cannot be swiched, only one should be defined, if more than one set the last one will be used
 
-<strong>Supported keycodes can be found in linux sourcode header: <a href="https://github.com/torvalds/linux/blob/master/include/uapi/linux/input-event-codes.h">Supported signals</a><br></strong>
+### Keybinds
+- Each keybind is to be defined in layer, if the layer `<static-layer>`, the binds will persist across all layers.</br>
+  
+- Bind has a mandatory attributes: `keys, type`</br>
+
+  
+  `keys` attribute - Are the physical key you're mapping (multiple keys are not currently supported)</br>
+  `type` attribute - The type of action that they bound key will perform
+  - `key` - maps physical key to your key example: `<bind keys="KEY_01" type="key" >KEY_KP0</bind>`
+  - `command` - maps key to run command example: `<bind keys="KEY_01" type="command" >notify-send "Hello"</bind>`
+  - `layer_control` - maps key to control layer switching, values `prev|next` example: `<bind ... type="layer_control" >next</bind>`
+
+>[!TIP]
+> You can find available keycodes in <a href="https://github.com/torvalds/linux/blob/master/include/uapi/linux/input-event-codes.h">input-event-code</a></strong></br>
+> No need to be an expert, general rule of thumb use keycodes which start like `KEY_`
+
 
 Example configuration:
 ```xml
