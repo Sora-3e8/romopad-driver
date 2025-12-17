@@ -10,8 +10,9 @@ The default keylayout of Romoral macropad is not very useful and there're no off
 This driver aims to aid that, the driver utilizes python-evdev to detect and remap key events sent by the macropad.</br>
 
 >[!NOTE]
-> Romoral macropad uses generic Acer dev id, which may cause the driver to remap other devices with the same id.</br>
-> This may affect some Acer and generic devices.</br>
+> Romoral macropad uses generic Acer device identification.</br>
+> This may cause the driver to remap other devices with the same id.</br>
+> Some Acer and generic devices.</br>
 
 ## 🎯 Scope
 - Target device: Romoral factory 12 key macropad
@@ -54,6 +55,11 @@ $ sudo make install
 $ systemctl --user daemon-reload
 $ systemctl --user enable --now romopad.service
 ```
+## Usage
+The user-space driver should immidiately be activated after the install
+- You can check the status using: `systemctl --user status romopad-service`
+- To enable: `systemctl --user enable --now romopad-service`
+- To disable: `systemctl --user disable --now romopad-service`
 
 ## 🐞 Known issues
 - In some environments the layer indicator may not show up, this is an issue caused by systemd not being able to pass the display variable as it was not set yet
