@@ -66,8 +66,7 @@ $ systemctl --user enable --now romopad.service
 
 
 ## 🔧 Configuration
-  The configuration uses xml format, where you define in each layer and binds, the parent node is <layout> and is mandatory along side with at least one layer.</br>
-  Remapping is split into layers where unique identifier is to be used for each layer.</br>
+  The configuration uses xml format: `layout --> layer --> bind` </br>
 
 ### Default config
 - Default config path is `~/.config/romopad/layout.xml`
@@ -82,7 +81,7 @@ $ systemctl --user enable --now romopad.service
 ### Layers
 - Configuration has two layer types `<layer>|<static-layer>`</br>
   
-- `<layer>` - Switchable layer, each layer has mandatory attribute `id`, switched by `layer_control` bind</br>
+- `<layer>` - Switchable layer, each layer has mandatory unique attribute `id`, switched by `layer_control` bind</br>
 
 - `<static-layer>` - Static layer, cannot be swiched, only one should be defined, if more than one set the last one will be used
 
@@ -103,7 +102,7 @@ $ systemctl --user enable --now romopad.service
 > No need to be an expert, general rule of thumb use keycodes which start like `KEY_`
 
 
-Example configuration:
+### Example configuration:
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <layout>
