@@ -12,14 +12,9 @@ This driver utilizes python evdev module to intercept the device and translate t
 
 ## 🎯 Scope
 - Target device: Romoral factory 12 key macropad
-- OS: Linux
-- Window servers: Wayland, Xorg (untested)
+- OS: Linux 
+- Display servers: `Wayland | Xorg (untested)`
 
-## Dependencies
- - Python
- - Pip
- - python-evdev (automatically fetched by venv)
- - make
 
 ## ✨ Features
 - layout layers
@@ -28,7 +23,14 @@ This driver utilizes python evdev module to intercept the device and translate t
 - mouse signals
 - command execution
 
-  
+
+## Dependencies
+ - Python
+ - Pip
+ - python-evdev (automatically fetched by venv)
+ - make
+
+
 ## 📦 Installation
 > [!CAUTION]
 > Under no circumtances should this program be run with root privileges.</br>
