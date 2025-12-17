@@ -66,7 +66,7 @@ $ systemctl --user enable --now romopad.service
 
 
 ## 🔧 Configuration
-  The configuration uses xml format, where you define in each layer and binds, the parent node is <layout> and is mandatory along side with at least one layer.
+  The configuration uses xml format, where you define in each layer and binds, the parent node is <layout> and is mandatory along side with at least one layer.</br>
   Remapping is split into layers where unique identifier is to be used for each layer.</br>
 
 ### Default config
