@@ -10,7 +10,7 @@ The default keylayout of Romoral macropad is not very useful and there're no off
 This driver aims to aid that, the driver utilizes python-evdev to detect and remap key events sent by the macropad.</br>
 
 >[!NOTE]
-> Romoral macropad uses generic Acer dev id, which may remap other devices with the same id.</br>
+> Romoral macropad uses generic Acer dev id, which may cause the driver to remap other devices with the same id.</br>
 > This may affect some Acer and generic devices.</br>
 
 ## 🎯 Scope
