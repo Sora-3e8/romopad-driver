@@ -10,16 +10,16 @@ This driver utilizes python evdev module to intercept the device and translate t
 > Romoral macropad uses generic Acer dev id, which may remap other devices with the same id</br>
 > This may affect some Acer and generic devices</br>
 
+## 🎯 Scope
+- Target device: Romoral factory 12 key macropad
+- OS: Linux
+- Window servers: Wayland, Xorg (untested)
+
 ## Dependencies
  - Python
  - Pip
  - python-evdev (automatically fetched by venv)
  - make
-
-## 🎯 Scope
-- Target device: Romoral factory 12 key macropad
-- OS: Linux
-- Window servers: Wayland, Xorg (untested)
 
 ## ✨ Features
 - layout layers
