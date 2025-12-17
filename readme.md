@@ -56,7 +56,7 @@ $ systemctl --user daemon-reload
 $ systemctl --user enable --now romopad.service
 ```
 ## Usage
-The user-space driver should immidiately be activated after the install
+The driver should be already active after the install
 - You can check the status using: `systemctl --user status romopad-service`
 - To enable: `systemctl --user enable --now romopad-service`
 - To disable: `systemctl --user disable --now romopad-service`
