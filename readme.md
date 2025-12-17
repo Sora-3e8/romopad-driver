@@ -77,7 +77,7 @@ Remapping is split into layers where unique identifier is to be used for each la
  - `<layer>` - Defines layer to which you can switch using `layer_control`, mandatory attribute `id`, id can be any text or number
  - `<static-layer>` - Only one should be defined, but if it happens more than one is defined, the last one will be used, this bind layer is static from the name,<br/>the keybinds here will work across layers eg. layer switching action should be defined here
 
-### Bind types:
+### Keybinds:
 `<bind>` - Mandatory attribute `keys` and `type`
 
 #### Attributes:
