@@ -57,9 +57,9 @@ $ systemctl --user enable --now romopad.service
 ```
 ## Usage
 The driver should be already active after the install
-- You can check the status using: `systemctl --user status romopad-service`
-- To enable: `systemctl --user enable --now romopad-service`
-- To disable: `systemctl --user disable --now romopad-service`
+- You can check the status using: `systemctl --user status romopad.service`
+- To enable: `systemctl --user enable --now romopad.service`
+- To disable: `systemctl --user disable --now romopad.service`
 
 ## 🐞 Known issues
 - In some environments the layer indicator may not show up, this is an issue caused by systemd not being able to pass the display variable as it was not set yet
