@@ -107,7 +107,7 @@ The user-space driver should immidiately be activated after the install
   `type` attribute - The type of action that they bound key will perform
   - `key` - maps physical key to your key example: `<bind keys="KEY_01" type="key" >KEY_KP0</bind>`
   - `command` - maps key to run command example: `<bind keys="KEY_01" type="command" >notify-send "Hello"</bind>`
-  - `layer_control` - maps key to control layer switching, values `prev|next` example: `<bind ... type="layer_control" >next</bind>`
+  - `layer_control` - maps key to control layer switching, values `prev|next`</br> example: `<bind ... type="layer_control" >next</bind>`
 
 >[!TIP]
 > You can find available keycodes in <a href="https://github.com/torvalds/linux/blob/master/include/uapi/linux/input-event-codes.h">input-event-code</a></strong> header</br>
