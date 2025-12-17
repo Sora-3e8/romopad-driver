@@ -70,6 +70,9 @@ The configuration uses xml format, where you define in each layer and binds, the
 Remapping is split into layers where unique identifier is to be used for each layer.
 
 
+### Default configuration path is `~/.config/romopad/layout.xml`
+- On install default `numpad layout` config is copied into your config path
+
 ### Layer types:
  - `<layer>` - Defines layer to which you can switch using `layer_control`, mandatory attribute `id`, id can be any text or number
  - `<static-layer>` - Only one should be defined, but if it happens more than one is defined, the last one will be used, this bind layer is static from the name,<br/>the keybinds here will work across layers eg. layer switching action should be defined here
@@ -86,12 +89,7 @@ Remapping is split into layers where unique identifier is to be used for each la
 
 <strong>Supported keycodes can be found in linux sourcode header: <a href="https://github.com/torvalds/linux/blob/master/include/uapi/linux/input-event-codes.h">Supported signals</a><br></strong>
 
-#### Configuration
-
-Configuration path: `~/.config/romopad/layout.xml`
-On install the initial configuration as a numpad is copied into current user's config path.
-
-Example configuration `layout.xml`:
+Example configuration:
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <layout>
@@ -126,6 +124,7 @@ Example configuration `layout.xml`:
 ```
 
 ## Device layout
+- Physical layout of keys for reference</br></br>
   <img src="macroboard_map.png" width=720>
 
 ## Uninstall
