@@ -98,7 +98,7 @@ $ systemctl --user enable --now romopad.service
   - `layer_control` - maps key to control layer switching, values `prev|next` example: `<bind ... type="layer_control" >next</bind>`
 
 >[!TIP]
-> You can find available keycodes in <a href="https://github.com/torvalds/linux/blob/master/include/uapi/linux/input-event-codes.h">input-event-code</a></strong></br>
+> You can find available keycodes in <a href="https://github.com/torvalds/linux/blob/master/include/uapi/linux/input-event-codes.h">input-event-code</a></strong> header</br>
 > No need to be an expert, general rule of thumb use keycodes which start like `KEY_`
 
 
